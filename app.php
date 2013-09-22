@@ -1,6 +1,10 @@
 <script type="text/javascript">
 	App = Ember.Application.create({});
-	
+	App.ApplicationView = Ember.View.extend({
+	  didInsertElement: function() {
+		 $("#loader").remove();
+	  }
+	});
 	App.WP = Ember.Object.extend({
 		loadedPosts: false,
 
@@ -64,6 +68,16 @@
 	});
 
 	Ember.Handlebars.helper('format-date', function(date) {
-	  return moment(date).fromNow();
+	  var dateString = date.year + date.month + date.day;// + date.hour + date.minute + date.second;
+	  //return dateString;
+	  return moment(dateString, 'YYYYMMDD').format('MMMM D, YYYY');
+	});
+	
+	Ember.Handlebars.helper('format-category', function(category) {
+	  // Ugly hacky way to get different colors for category labels.
+	  var color = "color-A";
+	  if (category == "Self-Referential") { color = "color-B" }
+	  else if (category == "Guides") { color = "color-C" }
+	  return new Handlebars.SafeString("<span class='label " + color + "'>" + category + "</span>");
 	});
 </script>

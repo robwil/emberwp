@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <title><?php wp_title('&laquo;', true, 'right'); ?> <?php bloginfo('name'); ?></title>
   <link rel="stylesheet" href="<?php bloginfo('template_directory') ?>/css/normalize.css">
+  <link rel="stylesheet" href="<?php bloginfo('template_directory') ?>/css/genericons.css">
+  <link href='http://fonts.googleapis.com/css?family=Libre+Baskerville|Jacques+Francois' rel='stylesheet' type='text/css'>
   <style type="text/css" media="screen">
     @import url( <?php bloginfo('stylesheet_url'); ?> );
   </style>
@@ -11,39 +13,35 @@
 </head>
 <body>
 
-  <script type="text/x-handlebars">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <a class="brand" href="#">Personal Blog of Rob Williams</a>
-        <ul class="nav">
-          <li>{{#link-to 'posts'}}Something{{/link-to}}</li>
-        </ul>
-      </div>
-    </div>
+  <div id="loader">
+	<img src="<?php bloginfo('template_directory') ?>/images/ajax-loader.gif"/>
+  </div>
 
+  <script type="text/x-handlebars">
     {{outlet}}
   </script>
 
   <script type="text/x-handlebars" id="posts">
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span3">
-          <table class='table'>
-            <thead>
-              <tr><th>Recent Posts</th></tr>
-            </thead>
-            {{#each model}}
-            <tr><td>
-                {{#link-to 'post' this}}{{post_title}} <small class='muted'>{{terms.[0].name}}</small>{{/link-to}}
-            </td></tr>
-            {{/each}}
-          </table>
-        </div>
-        <div class="span9">
-          {{outlet}}
-        </div>
-      </div>
-    </div>
+	<div class="container-fluid">
+	  <div class="row-fluid">
+		<div class="span3 banner">
+		  <h1><a href="/"><span class="home">Rob Williams</span></a></h1>
+		  <table class='table'>
+			<thead>
+			  <tr><th>Recent Posts</th></tr>
+			</thead>
+			{{#each model}}
+			<tr><td>
+				{{#link-to 'post' this}}{{post_title}}{{/link-to}} {{ format-category post_category }}
+			</td></tr>
+			{{/each}}
+		  </table>
+		</div>
+		<div class="span9">
+		  {{outlet}}
+		</div>
+	  </div>
+	</div>
   </script>
 
   <script type="text/x-handlebars" id="posts/index">
@@ -51,14 +49,16 @@
   </script>
 
   <script type="text/x-handlebars" id="post">
-    <h1>{{post_title}}</h1>
-    <h2>by {{author.name}} <small class='muted'>({{format-date date}})</small></h2>
+	<article class="post">
+		<h1 class="post-title">{{post_title}}</h1>
+		<h2> <small class='muted'>posted by {{post_author}} <span class="date">{{format-date post_date}}</span></small></h2>
 
-    <hr>
+		<hr>
 
-    <div class='post-content'>
-      {{{post_content}}}
-    </div>
+		<div class='post-content'>
+		  {{{post_content}}}
+		</div>
+	</article>
   </script>
 
   <script src="<?php bloginfo('template_directory') ?>/libs/jquery-1.9.1.js"></script>

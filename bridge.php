@@ -15,6 +15,7 @@ function getPosts() {
 	require("./password.php");
 	
 	$client = new WP_HTTP_IXR_CLIENT( site_url() . '/xmlrpc.php' );
+	//$client->debug = true;
 	
 	$filter['number'] = 10;
 	$result = $client->query( 'wp.getPosts', array(
@@ -25,28 +26,21 @@ function getPosts() {
 		array("post_id", "post_title", "post_date", "post_author", "terms", "post_content", "post_name")
 	));
 	$posts = $client->getResponse();
+	$result = $client->query( 'wp.getUser', array(
+		0,
+		$WP_USERNAME,
+		$WP_PASSWORD,
+		$posts[0]['post_author']
+	));
+	$author = $client->getResponse();
 	foreach ($posts as &$post) {
 		$post['post_content'] = wpautop( $post['post_content'] );
+		$post['post_author'] = $author['nickname'];
+		$post['post_category'] = $post['terms'][0]['name'];
 	}
 	
 	echo json_encode($posts);
 }
-
-/*function getPost($post_id) {
-	$client = new WP_HTTP_IXR_CLIENT( site_url() . '/xmlrpc.php' );
-
-	$result = $client->query( 'wp.getPost', array(
-		0,
-		$WP_USERNAME,
-		$WP_PASSWORD,
-		intval($post_id),
-		array("post_id", "post_title", "post_date", "post_author", "terms", "post_content", "post_name")
-	));
-	$post = $client->getResponse();
-	$post['post_content'] = wpautop( $post['post_content'] );
-
-	echo json_encode($post);
-}*/
 
 if ($_GET['action'] == 'getPosts') {
 	getPosts();
