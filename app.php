@@ -7,7 +7,9 @@
 	});
 	App.WP = Ember.Object.extend({
 		loadedPosts: false,
-
+		page: 1,
+		pages: 1,
+		
 		loadPosts: function() {
 		  var wp = this;
 		  return Ember.Deferred.promise(function (p) {
@@ -18,13 +20,14 @@
 			} else {
 
 			  // If we haven't loaded the links, load them via JSON
-			  p.resolve($.getJSON("<?php bloginfo('template_directory') ?>/bridge.php?action=getPosts").then(function(response) {
-				var posts = response.map(function(post) {
-					post.id = post.post_id;
+			  p.resolve($.getJSON("<?php echo site_url(); ?>/?json=1").then(function(response) {
+				var posts = response.posts.map(function(post) {
 					post.wp = wp;
+					post.category = post.categories[0].title;
+					post.body = post.content;
 					return post;
 				});
-				wp.setProperties({posts: posts, loadedPosts: true});
+				wp.setProperties({posts: posts, loadedPosts: true, page: 1, pages: response.pages});
 				return posts;
 			  }));
 			}
@@ -33,7 +36,7 @@
 
 		findPostByName: function(post_name) {
 		  return this.loadPosts().then(function (posts) {
-			return posts.findProperty('post_name', post_name);
+			return posts.findProperty('slug', post_name);
 		  });
 		}
 	});
@@ -63,14 +66,12 @@
 		return this.modelFor("posts")[0].wp.findPostByName(params.post_name);
 	  },
 	  serialize: function(model) {
-		return {year: model.post_date.year, month: model.post_date.month, post_name: model.post_name};
+		return {year: model.date.substring(0,4), month: model.date.substring(5,7), post_name: model.slug};
 	  }
 	});
 
 	Ember.Handlebars.helper('format-date', function(date) {
-	  var dateString = date.year + date.month + date.day;// + date.hour + date.minute + date.second;
-	  //return dateString;
-	  return moment(dateString, 'YYYYMMDD').format('MMMM D, YYYY');
+	  return moment(date, 'YYYY-MM-DD hh:mm:ss').format('MMMM D, YYYY');
 	});
 	
 	Ember.Handlebars.helper('format-category', function(category) {

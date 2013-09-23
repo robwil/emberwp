@@ -32,7 +32,7 @@
 			</thead>
 			{{#each model}}
 			<tr><td>
-				{{#link-to 'post' this}}{{post_title}}{{/link-to}} {{ format-category post_category }}
+				{{#link-to 'post' this}}{{title}}{{/link-to}} {{ format-category category }}
 			</td></tr>
 			{{/each}}
 		  </table>
@@ -50,13 +50,13 @@
 
   <script type="text/x-handlebars" id="post">
 	<article class="post">
-		<h1 class="post-title">{{post_title}}</h1>
-		<h2> <small class='muted'>posted by {{post_author}} <span class="date">{{format-date post_date}}</span></small></h2>
+		<h1 class="post-title">{{title}}</h1>
+		<h2> <small class='muted'>posted by {{author.nickname}} <span class="date">{{format-date date}}</span></small></h2>
 
 		<hr>
 
 		<div class='post-content'>
-		  {{{post_content}}}
+		  {{{body}}}
 		</div>
 	</article>
   </script>
