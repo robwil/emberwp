@@ -1,5 +1,7 @@
 <script type="text/javascript">
-	App = Ember.Application.create({});
+	App = Ember.Application.create({
+  LOG_TRANSITIONS: true
+});
 	App.ApplicationView = Ember.View.extend({
 	  didInsertElement: function() {
 		 $("#loader").remove();
@@ -9,6 +11,7 @@
 		loadedPosts: false,
 		page: 1,
 		pages: 1,
+		lastPost: undefined,
 		
 		loadPosts: function(page) {
 		  var wp = this;
@@ -38,7 +41,12 @@
 
 		findPostByName: function(post_name) {
 		  var wp = this;
-		  return this.loadPosts(1).then(function (posts) {
+		  if (post_name === undefined) {
+			return wp.get('lastPost');
+		  }
+		  var curpage = wp.get('page');
+		  if (curpage === undefined) { curpage = 1; }
+		  return this.loadPosts(curpage).then(function (posts) {
 			var post = posts.findProperty('slug', post_name);
 			if (post === undefined) {
 				return Ember.Deferred.promise(function (p) {
@@ -46,10 +54,12 @@
 						post = response.post;
 						post.category = post.categories[0].title;
 						post.body = post.content;
+						wp.setProperties({'lastPost':post});
 						return post;
 					}));
 				});
 			} else {
+				wp.setProperties({'lastPost':post});
 				return post;
 			}
 		  });
@@ -66,7 +76,9 @@
 
 	App.PostsRoute = Ember.Route.extend({
 	  model: function() {
-		return WP.loadPosts(1).then(function(posts) {
+		var curpage = WP.get('page');
+		if (curpage === undefined) { curpage = 1; }
+		return WP.loadPosts(curpage).then(function(posts) {
 			return posts;
 		});
 	  },
@@ -83,6 +95,7 @@
 	  },
 	  renderTemplate: function() {
 		this.render({outlet: 'sidebar'});
+		this.render('post', {controller: this.controllerFor('post')});
 	  }
 	});
 
@@ -108,15 +121,14 @@
 	});
 	
 	Ember.Handlebars.helper('page-links', function() {
-		debugger;
 	  var prev = Number(WP.page)-1;
 	  var next = Number(WP.page)+1;
 	  var output = "";
 	  if (prev >= 1) {
-		output += "<a href='/#/" + prev + "' title='previous'>previous</a>";
+		output += "<a href='/#/" + prev + "' title='previous'>&laquo; previous</a>";
 	  }
 	  if (next <= WP.pages) {
-	    output += " <a href='/#/" + next + "' title='next'>next</a>";
+	    output += " <a href='/#/" + next + "' title='next'>next &raquo;</a>";
 	  }
 	  return new Handlebars.SafeString(output);
 	});
