@@ -40,16 +40,14 @@
   
   <script type="text/x-handlebars" id="_main">
 	<h1><a href="/"><span class="home">Rob Williams</span></a></h1>
-	<table class='table'>
-		<thead>
-		  <tr><th>Recent Posts</th></tr>
-		</thead>
+	<ul class="nav nav-list">
+		<li class="nav-header">Recent Posts</li>
 		{{#each model}}
-		<tr><td>
-			{{#link-to 'post' this}}{{{title}}}{{/link-to}} {{ format-category category }}
-		</td></tr>
+		<li>
+			{{#link-to 'post' this}}{{{title}}}{{ format-category category }}{{/link-to}} 
+		</li>
 		{{/each}}
-	</table>
+	</ul>
 	{{#bind model}}{{page-links}}{{/bind}}
   </script>
 
