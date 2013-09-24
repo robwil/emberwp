@@ -18,39 +18,54 @@
   </div>
 
   <script type="text/x-handlebars">
-    {{outlet}}
+    <div class="container-fluid">
+	  <div class="row-fluid">
+		<div class="span3 banner">
+		  {{outlet sidebar}}
+		</div>
+		<div class="span9">
+		  {{outlet main}}
+		</div>
+	  </div> <!-- end .row-fluid -->
+	</div> <!-- end .container-fluid -->
   </script>
 
   <script type="text/x-handlebars" id="posts">
-	<div class="container-fluid">
-	  <div class="row-fluid">
-		<div class="span3 banner">
-		  <h1><a href="/"><span class="home">Rob Williams</span></a></h1>
-		  <table class='table'>
-			<thead>
-			  <tr><th>Recent Posts</th></tr>
-			</thead>
-			{{#each model}}
-			<tr><td>
-				{{#link-to 'post' this}}{{title}}{{/link-to}} {{ format-category category }}
-			</td></tr>
-			{{/each}}
-		  </table>
-		</div>
-		<div class="span9">
-		  {{outlet}}
-		</div>
-	  </div>
-	</div>
+	{{partial "main"}}
+  </script>
+  
+  <script type="text/x-handlebars" id="page">
+	{{partial "main"}}
+  </script>
+  
+  <script type="text/x-handlebars" id="_main">
+	<h1><a href="/"><span class="home">Rob Williams</span></a></h1>
+	<table class='table'>
+		<thead>
+		  <tr><th>Recent Posts</th></tr>
+		</thead>
+		{{#each model}}
+		<tr><td>
+			{{#link-to 'post' this}}{{{title}}}{{/link-to}} {{ format-category category }}
+		</td></tr>
+		{{/each}}
+	</table>
+	{{#bind model}}{{page-links}}{{/bind}}
   </script>
 
   <script type="text/x-handlebars" id="posts/index">
-    <p class="text-warning">Please select a post</p>
+    <article class="post">
+		<h1 class="post-title">Welcome</h1>
+		<p>
+			This is the blog where I post any projects or insights that I've come up with.
+			Navigate on the left side to find something that interests you.
+		</p>
+	</article>
   </script>
-
+ 
   <script type="text/x-handlebars" id="post">
 	<article class="post">
-		<h1 class="post-title">{{title}}</h1>
+		<h1 class="post-title">{{{title}}}</h1>
 		<h2> <small class='muted'>posted by {{author.nickname}} <span class="date">{{format-date date}}</span></small></h2>
 
 		<hr>
