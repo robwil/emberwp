@@ -23,7 +23,7 @@
 		<div class="span3 banner">
 		  {{outlet sidebar}}
 		</div>
-		<div class="span9">
+		<div class="span9 main">
 		  {{outlet main}}
 		</div>
 	  </div> <!-- end .row-fluid -->
@@ -44,7 +44,7 @@
 		<li class="nav-header">Recent Posts</li>
 		{{#each model}}
 		<li>
-			{{#link-to 'post' this}}{{{title}}}{{ format-category category }}{{/link-to}} 
+			{{#link-to 'post' this}}{{{title}}} {{ format-category category }}{{/link-to}} 
 		</li>
 		{{/each}}
 	</ul>
